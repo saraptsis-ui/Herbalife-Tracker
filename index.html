@@ -1,432 +1,837 @@
-<!DOCTYPE html>
+            <!DOCTYPE html>
 <html lang="el">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Δες τι αξίζεις</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Herbalife Tracker">
+<meta name="theme-color" content="#3a7d2c">
+<title>Herbalife Team Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{background:#18120d;color:#f5e6c8;font-family:'Lato',sans-serif;min-height:100vh}
-.wrap{max-width:480px;margin:0 auto;padding:0 22px 80px}
-input:focus,textarea:focus{outline:none;border-color:#c8963e!important;background:rgba(200,140,50,0.08)!important}
-input::placeholder,textarea::placeholder{color:rgba(230,210,180,0.2)}
-textarea{resize:none}
-button:active{transform:scale(0.97)}
-button{-webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer}
-input{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-@keyframes flicker{0%,100%{opacity:1}50%{opacity:0.65}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f2f8ef;font-family:'Nunito',sans-serif;color:#1a2e14;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:#b5d9a0;}
+.card{background:#fff;border:1px solid #dcebd6;border-radius:14px;padding:16px;box-shadow:0 1px 8px rgba(0,0,0,.04);}
+.btn{border:none;border-radius:10px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;transition:all .1s;font-size:15px;}
+.gbtn{background:#3a7d2c;color:#fff;padding:14px;width:100%;font-size:16px;}
+.gbtn:active{transform:scale(.98);}
+.gbtn:disabled{opacity:.4;}
+.ghost{background:#fff;border:2px solid #cce5c0;color:#3a7d2c;padding:9px 16px;font-size:13px;}
+.ghost.on{background:#3a7d2c;border-color:#3a7d2c;color:#fff;}
+.act-btn{background:#fff;border:2px solid #dcebd6;border-radius:12px;padding:14px;cursor:pointer;text-align:left;width:100%;font-family:'Nunito',sans-serif;transition:border-color .1s;}
+.act-btn:active{transform:scale(.96);}
+.act-btn.fl{border-color:#67bc2a;background:#f0fae8;}
+.inp{background:#fff;border:2px solid #cce5c0;color:#1a2e14;border-radius:10px;padding:13px 16px;font-size:16px;font-family:'Nunito',sans-serif;width:100%;outline:none;}
+.inp:focus{border-color:#3a7d2c;box-shadow:0 0 0 3px rgba(58,125,44,.15);}
+.badge{background:#eaf6e4;color:#3a7d2c;border:1px solid #c0deb6;border-radius:6px;padding:3px 10px;font-size:13px;font-weight:800;display:inline-block;}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;}
+.tabs::-webkit-scrollbar{display:none;}
+.pb-bg{background:#e8f5e0;border-radius:99px;height:10px;overflow:hidden;margin-top:6px;}
+.pb-fill{height:10px;border-radius:99px;transition:width .5s;}
+.row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #f0f6ee;}
+.row:last-child{border-bottom:none;}
+.hdr{background:#3a7d2c;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
+
 @keyframes spin{to{transform:rotate(360deg)}}
-.fadeUp{animation:fadeUp 0.5s ease both}
-.screen{display:none}.screen.active{display:block}
-.btn{width:100%;border:none;border-radius:14px;padding:18px;background:linear-gradient(135deg,#c8963e,#a8722e);color:#18120d;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:'Lato',sans-serif;margin-bottom:12px}
-.btn:disabled{background:rgba(200,140,50,0.12);color:rgba(200,140,50,0.3);cursor:default}
-.btn-ghost{width:100%;background:transparent;border:1px solid rgba(200,140,50,0.2);border-radius:12px;padding:16px;color:rgba(200,140,50,0.5);font-size:14px;cursor:pointer;font-family:'Lato',sans-serif;letter-spacing:1px;margin-bottom:12px}
-.gold-input{width:100%;background:rgba(200,140,50,0.05);border:1px solid rgba(200,140,50,0.3);border-radius:12px;padding:16px 18px;color:#f5e6c8;font-size:16px;font-family:'Lato',sans-serif;margin-bottom:16px}
-.label{display:block;font-size:11px;letter-spacing:3px;color:rgba(220,170,80,1);text-transform:uppercase;margin-bottom:8px}
-.err{color:#e87060;font-size:13px;margin-bottom:12px;text-align:center}
-.btn-ghost{color:rgba(200,140,50,0.8)!important}
-p,span,h1,h2{-webkit-font-smoothing:antialiased}
+.hdr-btn{background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:14px;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:24px;z-index:100;}
+@keyframes pf{0%{opacity:1;transform:translate(-50%,-65%) scale(.3);}40%{opacity:1;transform:translate(-50%,-55%) scale(1.2);}100%{opacity:0;transform:translate(-50%,-40%) scale(1);}}
+.pop-anim{position:fixed;top:42%;left:50%;font-size:72px;font-weight:900;color:#3a7d2c;pointer-events:none;animation:pf .8s forwards;z-index:999;font-family:'Nunito',sans-serif;}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div id="app"></div>
 
-<!-- HOME -->
-<div id="home" class="screen active fadeUp" style="padding-top:100px;text-align:center">
-  <div style="font-size:34px;margin-bottom:28px;display:inline-block;filter:drop-shadow(0 0 18px rgba(200,140,50,0.8));animation:flicker 3s ease-in-out infinite">✦</div>
-  <h1 style="font-family:'Cormorant Garamond',serif;font-size:54px;font-weight:700;color:#f5e6c8;line-height:1.0;letter-spacing:-1.5px;margin-bottom:14px">Δες τι<br>αξίζεις</h1>
-  <p style="font-size:14px;color:rgba(240,220,180,0.7);line-height:1.8;margin-bottom:64px">Μερικές ερωτήσεις που αξίζει<br>να κάνεις στον εαυτό σου.</p>
-  <button class="btn" onclick="showScreen('candidate_intro')">Ξεκινάμε</button>
-  <button class="btn-ghost" onclick="showScreen('login')">Σύνδεση Συνεργάτη</button>
-  <p style="margin-top:8px;font-size:12px;color:rgba(230,210,180,0.3)">από τον Ανδρέας Σαραπτσής</p>
-</div>
-
-<!-- LOGIN -->
-<div id="login" class="screen" style="padding-top:80px">
-  <button onclick="showScreen('home')" style="background:transparent;border:none;color:rgba(200,140,50,0.4);font-size:13px;cursor:pointer;margin-bottom:32px;letter-spacing:1px">← Πίσω</button>
-  <h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:#f5e6c8;margin-bottom:8px">Σύνδεση</h2>
-  <p style="font-size:14px;color:rgba(240,220,180,0.5);margin-bottom:36px">Μπες στον λογαριασμό σου</p>
-  <div id="loginErr" class="err" style="display:none"></div>
-  <label class="label">Email</label>
-  <input class="gold-input" type="email" id="loginEmail" placeholder="email@example.com" autocomplete="email" autocapitalize="none">
-  <label class="label">Κωδικός</label>
-  <input class="gold-input" type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
-  <button class="btn" id="loginBtn">Σύνδεση</button>
-  <button class="btn-ghost" onclick="showScreen('register')">Δεν έχω λογαριασμό</button>
-</div>
-
-<!-- REGISTER -->
-<div id="register" class="screen" style="padding-top:80px">
-  <button onclick="showScreen('login')" style="background:transparent;border:none;color:rgba(200,140,50,0.4);font-size:13px;cursor:pointer;margin-bottom:32px;letter-spacing:1px">← Πίσω</button>
-  <h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:#f5e6c8;margin-bottom:8px">Εγγραφή</h2>
-  <p style="font-size:14px;color:rgba(240,220,180,0.5);margin-bottom:36px">Δημιούργησε τον λογαριασμό σου</p>
-  <div id="regErr" class="err" style="display:none"></div>
-  <label class="label">Πλήρες όνομα</label>
-  <input class="gold-input" type="text" id="regName" placeholder="π.χ. Γιώργος Παπαδόπουλος">
-  <label class="label">Email</label>
-  <input class="gold-input" type="email" id="regEmail" placeholder="email@example.com">
-  <label class="label">Κωδικός</label>
-  <input class="gold-input" type="password" id="regPass" placeholder="Τουλάχιστον 6 χαρακτήρες">
-  <button class="btn" id="regBtn">Εγγραφή</button>
-</div>
-
-<!-- CANDIDATE INTRO -->
-<div id="candidate_intro" class="screen" style="padding-top:80px;text-align:center">
-  <div style="font-size:13px;letter-spacing:3px;color:rgba(200,140,50,0.5);text-transform:uppercase;margin-bottom:48px">10 ερωτήσεις · ~5 λεπτά</div>
-  <h2 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:#f5e6c8;line-height:1.3;margin-bottom:16px">Είσαι έτοιμος να είσαι<br>ειλικρινής με τον εαυτό σου;</h2>
-  <p style="font-size:15px;color:rgba(240,220,180,0.7);line-height:1.8;margin-bottom:48px">Δεν υπάρχουν σωστές ή λάθος απαντήσεις.<br>Μόνο η αλήθεια σου έχει αξία εδώ.</p>
-  <label class="label" style="text-align:left">Το όνομά σου</label>
-  <input class="gold-input" type="text" id="nameInput" placeholder="π.χ. Μαρία" oninput="checkName()">
-  <label class="label" style="text-align:left">Από ποιον συνεργάτη;</label>
-  <input class="gold-input" type="text" id="collabInput" placeholder="π.χ. Γιώργος">
-  <button class="btn" id="startBtn" disabled onclick="startQuestions()">Είμαι έτοιμος</button>
-  <button onclick="showScreen('home')" style="background:transparent;border:none;color:rgba(200,140,50,0.3);font-size:13px;cursor:pointer;letter-spacing:1px">← Πίσω</button>
-</div>
-
-<!-- QUESTIONS -->
-<div id="questions" class="screen" style="padding-top:44px">
-  <div style="display:flex;justify-content:space-between;margin-bottom:10px">
-    <span id="qLabel" style="font-size:11px;letter-spacing:3px;color:rgba(200,140,50,0.45);text-transform:uppercase">Ερώτηση 1</span>
-    <span id="qCount" style="font-size:11px;letter-spacing:2px;color:rgba(200,140,50,0.38)">1 / 10</span>
-  </div>
-  <div style="height:2px;background:rgba(200,140,50,0.08);border-radius:2px;overflow:hidden;margin-bottom:48px">
-    <div id="progressFill" style="height:100%;width:10%;background:linear-gradient(90deg,#c8963e,#e8b86a);border-radius:2px;transition:width 0.4s ease"></div>
-  </div>
-  <p id="qNum" style="font-size:11px;letter-spacing:3px;color:rgba(200,140,50,0.48);text-transform:uppercase;margin-bottom:14px"></p>
-  <p id="qText" style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:#f5e6c8;line-height:1.45;margin-bottom:28px"></p>
-  <textarea id="answerInput" rows="6" placeholder="Γράψε ειλικρινά..." style="width:100%;background:rgba(200,140,50,0.04);border:1px solid rgba(200,140,50,0.3);border-radius:12px;padding:16px 18px;color:#f5e6c8;font-size:15px;font-family:'Lato',sans-serif;line-height:1.7;margin-bottom:28px;display:block"></textarea>
-  <div style="display:flex;gap:12px">
-    <button id="prevBtn" class="btn-ghost" onclick="prevQ()" style="display:none;width:auto;padding:16px 22px;margin:0">←</button>
-    <button id="nextBtn" class="btn" onclick="nextQ()" style="margin:0">Επόμενο →</button>
-  </div>
-</div>
-
-<!-- LOADING -->
-<div id="loading" class="screen" style="padding-top:150px;text-align:center">
-  <div style="width:44px;height:44px;border:2px solid rgba(200,140,50,0.15);border-top:2px solid #c8963e;border-radius:50%;animation:spin 1.2s linear infinite;margin:0 auto 28px"></div>
-  <p style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#f5e6c8;margin-bottom:10px">Αναλύουμε τις απαντήσεις σου...</p>
-  <p style="font-size:12px;color:rgba(200,140,50,0.35);letter-spacing:2px">Λίγα δευτερόλεπτα</p>
-</div>
-
-<!-- RESULTS -->
-<div id="results" class="screen" style="padding-top:56px">
-  <p style="font-size:11px;letter-spacing:3px;color:rgba(200,140,50,0.42);text-transform:uppercase;margin-bottom:8px">Τα αποτελέσματά σου</p>
-  <h2 id="resName" style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;color:#f5e6c8;margin-bottom:40px"></h2>
-  <div style="text-align:center;padding:36px 0;border-top:1px solid rgba(200,140,50,0.1);border-bottom:1px solid rgba(200,140,50,0.1);margin-bottom:40px">
-    <div id="scoreTotal" style="font-family:'Cormorant Garamond',serif;font-size:88px;font-weight:700;color:#c8963e;line-height:1;letter-spacing:-4px;filter:drop-shadow(0 0 30px rgba(200,140,50,0.4))">0</div>
-    <div style="font-size:11px;color:rgba(200,140,50,0.3);letter-spacing:3px;margin-top:10px">ΣΥΝΟΛΙΚΗ ΒΑΘΜΟΛΟΓΙΑ / 100</div>
-  </div>
-  <div id="criteriaList" style="margin-bottom:36px"></div>
-  <div style="background:rgba(200,140,50,0.04);border:1px solid rgba(200,140,50,0.1);border-radius:14px;padding:24px 20px;margin-bottom:16px">
-    <p style="font-size:11px;letter-spacing:3px;color:rgba(200,140,50,0.32);text-transform:uppercase;margin-bottom:12px">Ανάλυση</p>
-    <p id="analysisText" style="font-size:15px;color:rgba(240,220,180,0.7);line-height:1.85"></p>
-  </div>
-  <div id="recBox" style="border-radius:14px;padding:24px 20px;margin-bottom:32px;border:1px solid">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-      <span id="recIcon" style="font-size:18px"></span>
-      <span id="recTitle" style="font-size:16px;font-weight:700"></span>
-    </div>
-    <p id="recText" style="font-size:14px;color:rgba(240,220,180,0.5);line-height:1.7"></p>
-  </div>
-  <div style="background:rgba(37,211,102,0.07);border:1px solid rgba(37,211,102,0.2);border-radius:14px;padding:24px 20px;margin-bottom:16px;text-align:center">
-    <p style="font-size:15px;color:rgba(240,220,180,0.8);line-height:1.7;margin-bottom:20px">Θέλεις να μιλήσεις με τον <strong>Ανδρέας Σαραπτσής</strong><br>για το επόμενο βήμα;</p>
-    <button onclick="openWA()" style="width:100%;background:linear-gradient(135deg,#25d366,#1aab52);border:none;border-radius:12px;padding:16px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:'Lato',sans-serif">💬 Επικοινώνησε τώρα μέσω WhatsApp</button>
-  </div>
-  <button onclick="showScreen('home')" class="btn-ghost">Επιστροφή</button>
-</div>
-
-<!-- DASHBOARD (συνεργάτης) -->
-<div id="dashboard" class="screen" style="padding-top:44px">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:36px">
-    <div>
-      <p style="font-size:11px;letter-spacing:3px;color:rgba(200,140,50,0.42);text-transform:uppercase;margin-bottom:4px">Καλώς ήρθες</p>
-      <h2 id="dashName" style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:#f5e6c8"></h2>
-    </div>
-    <button onclick="doLogout()" style="background:transparent;border:1px solid rgba(200,140,50,0.2);border-radius:8px;padding:8px 16px;color:rgba(200,140,50,0.5);font-size:12px;cursor:pointer;letter-spacing:1px">Έξοδος</button>
-  </div>
-  <div id="dashList"></div>
-</div>
-
-<!-- MANAGER DASHBOARD -->
-<div id="manager" class="screen" style="padding-top:44px">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:36px">
-    <div>
-      <p style="font-size:11px;letter-spacing:3px;color:rgba(200,140,50,0.42);text-transform:uppercase;margin-bottom:4px">Manager</p>
-      <h2 style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:#f5e6c8">Ανδρέας Σαραπτσής</h2>
-    </div>
-    <button onclick="doLogout()" style="background:transparent;border:1px solid rgba(200,140,50,0.2);border-radius:8px;padding:8px 16px;color:rgba(200,140,50,0.5);font-size:12px;cursor:pointer;letter-spacing:1px">Έξοδος</button>
-  </div>
-  <div id="managerList"></div>
-</div>
-
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = 'https://osaycebwbfzksxhdcocw.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_3APVR35iMarcPhtpVr6ShQ_Xi2823SW';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const WHATSAPP = "306944146316";
-const MANAGER_EMAIL = "saraptsis@gmail.com";
+const LOGO_SRC = "data:image/jpeg;base64,/9j/4QFARXhpZgAATU0AKgAAAAgACAEOAAIAAAALAAAAbgESAAMAAAABAAEAAAEaAAUAAAABAAAAegEbAAUAAAABAAAAggEoAAMAAAABAAIAAAEyAAIAAAAUAAAAigITAAMAAAABAAEAAIdpAAQAAAABAAAAngAAAABTY3JlZW5zaG90AAAAAABIAAAAAQAAAEgAAAABMjAyNjowNToxOSAxNDo0OTozOAAACZAAAAcAAAAEMDIyMZADAAIAAAAUAAABEJEBAAcAAAAEAQIDAJKGAAcAAAASAAABJKAAAAcAAAAEMDEwMKABAAMAAAABAAEAAKACAAQAAAABAAAEm6ADAAQAAAABAAAJ/KQGAAMAAAABAAAAAAAAAAAyMDI2OjA1OjE5IDE0OjQ5OjM4AEFTQ0lJAAAAU2NyZWVuc2hvdAAA/+EKd2h0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8APD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNi4wLjAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczpwaG90b3Nob3A9Imh0dHA6Ly9ucy5hZG9iZS5jb20vcGhvdG9zaG9wLzEuMC8iIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIiBwaG90b3Nob3A6RGF0ZUNyZWF0ZWQ9IjIwMjYtMDUtMTlUMTQ6NDk6MzgiIHhtcDpNb2RpZnlEYXRlPSIyMDI2LTA1LTE5VDE0OjQ5OjM4Ij4gPGRjOmRlc2NyaXB0aW9uPiA8cmRmOkFsdD4gPHJkZjpsaSB4bWw6bGFuZz0ieC1kZWZhdWx0Ij5TY3JlZW5zaG90PC9yZGY6bGk+IDwvcmRmOkFsdD4gPC9kYzpkZXNjcmlwdGlvbj4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPD94cGFja2V0IGVuZD0idyI/PgD/4gIoSUNDX1BST0ZJTEUAAQEAAAIYYXBwbAQAAABtbnRyUkdCIFhZWiAH5gABAAEAAAAAAABhY3NwQVBQTAAAAABBUFBMAAAAAAAAAAAAAAAAAAAAAAAA9tYAAQAAAADTLWFwcGwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApkZXNjAAAA/AAAADBjcHJ0AAABLAAAAFB3dHB0AAABfAAAABRyWFlaAAABkAAAABRnWFlaAAABpAAAABRiWFlaAAABuAAAABRyVFJDAAABzAAAACBjaGFkAAAB7AAAACxiVFJDAAABzAAAACBnVFJDAAABzAAAACBtbHVjAAAAAAAAAAEAAAAMZW5VUwAAABQAAAAcAEQAaQBzAHAAbABhAHkAIABQADNtbHVjAAAAAAAAAAEAAAAMZW5VUwAAADQAAAAcAEMAbwBwAHkAcgBpAGcAaAB0ACAAQQBwAHAAbABlACAASQBuAGMALgAsACAAMgAwADIAMlhZWiAAAAAAAAD21QABAAAAANMsWFlaIAAAAAAAAIPfAAA9v////7tYWVogAAAAAAAASr8AALE3AAAKuVhZWiAAAAAAAAAoOAAAEQsAAMi5cGFyYQAAAAAAAwAAAAJmZgAA8qcAAA1ZAAAT0AAACltzZjMyAAAAAAABDEIAAAXe///zJgAAB5MAAP2Q///7ov///aMAAAPcAADAbv/bAIQAAQEBAQEBAgEBAgMCAgIDBAMDAwMEBQQEBAQEBQYFBQUFBQUGBgYGBgYGBgcHBwcHBwgICAgICQkJCQkJCQkJCQEBAQECAgIEAgIECQYFBgkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJ/90ABAAv/8AAEQgBSgLwAwEiAAIRAQMRAf/EAaIAAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKCxAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6AQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgsRAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/aAAwDAQACEQMRAD8A/v4ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/Q/v4ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK+Ffib8ZPiR4e+JF9oGj6j5NpDLGqR+TC2AUUnlkJ7+tfdVfmP8AGf8A5LBqf/XaL/0WlAH/0f7+KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACvzH+M//JYNT/67Rf8AotK/TivzH+M//JYNT/67Rf8AotKAP//S/v4ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK/Mf4z/8lg1P/rtF/wCi0r9OK/Mf4z/8lg1P/rtF/wCi0oA//9P+/iiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAr8x/jP/yWDU/+u0X/AKLSv04r8x/jP/yWDU/+u0X/AKLSgD//1P7+KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACvzH+M//JYNT/67Rf8AotK/TivzH+M//JYNT/67Rf8AotKAP//V/v4ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK/Mf4z/8lg1P/rtF/wCi0r9OK/Mf4z/8lg1P/rtF/wCi0oA//9b+/iiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiq1zcpbR+Y2P5V4f8AEP45WfgGAzNYi6wM4EwT/wBlNTKaitTOpUjFXke80V4d8KvjTB8T4lkhsPseR/z1En/si17jRCSauh06kZK8QoooqiwooooAKKKKACiiigAooooAKKKKACiiigAooooAK/Mf4z/8lg1P/rtF/wCi0r9OK/Mf4z/8lg1P/rtF/wCi0oA//9f+/iiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKTIFLWTq1/Dp9v5svAoA0jLGOppRIh6Gvlf4g/tI+Bfh+jPrk2wL7gV5lpH7enwVu2VFueTx94VzyxVNOzZxyx9GLs5H3xRXz54W/aP+H3ikqmmS5LdORXvNldxX1stzD91ulawnF7HRTqxl8Jaqhe31vaW7SyuFCircjqiknsK+CP2kf2mvCHgHw9f2dzPsnCELyBzU1q0YRuyMRiI0o80hf2pP2ivDvgPw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P54v2Zv+Cay6/f22vtADjFf0jfs6fspL8NbG1lEQXYB+lfT/AIH/AGa/hH8O7dbXwpYSQImMBp5H6f7zGvcba2htIVt4BhV6CvrMvyeFFbH22VcPU8OrtakkSeXEsf8AdAH5VJRRXtH0YUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFfmP8AGf8A5LBqf/XaL/0WlfpxX5j/ABn/AOSwan/12i/9FpQB/9f+/iiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAr8x/jP/yWDU/+u0X/AKLSv04r8x/jP/yWDU/+u0X/AKLSgD//0P7+KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACvzH+M//JYNT/67Rf8AotK/TivzH+M//JYNT/67Rf8AotKAP//R/v4ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK/Mf4z/8lg1P/rtF/wCi0r9OK/Mf4z/8lg1P/rtF/wCi0oA//9L+/iiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAr8x/jP/yWDU/+u0X/AKLSv04r8x/jP/yWDU/+u0X/AKLSgD//0/7gv+GgfB//ADxuP++R/jR/w0D4P/543H/fI/xr41ooA+yv+GgfB/8AzxuP++R/jR/w0D4P/wCeNx/3yP8AGvjWigD7K/4aB8H/APPG4/75H+NH/DQPg/8A543H/fI/xr41ooA+yv8AhoHwf/zxuP8Avkf40f8ADQPg/wD543H/AHyP8a+NaKAPsr/hoHwf/wA8bj/vkf40f8NA+D/+eNx/3yP8a+NaKAPsr/hoHwf/AM8bj/vkf40f8NA+D/8Anjcf98j/ABr41ooA+yv+GgfB/wDzxuP++R/jR/w0D4P/AOeNx/3yP8a+NaKAPsr/AIaB8H/88bj/AL5H+NH/AA0D4P8A+eNx/wB8j/GvjWigD7K/4aB8H/8APG4/75H+NH/DQPg//njcf98j/GvjWigD7K/4aB8H/wDPG4/75H+NH/DQPg//AJ43H/fI/wAa+NaKAPsr/hoHwf8A88bj/vkf40f8NA+D/wDnjcf98j/GvjWigD7K/wCGgfB//PG4/wC+R/jR/wANA+D/APnjcf8AfI/xr41ooA+yv+GgfB//ADxuP++R/jR/w0D4P/543H/fI/xr41ooA+yv+GgfB/8AzxuP++R/jR/w0D4P/wCeNx/3yP8AGvjWigD7K/4aB8H/APPG4/75H+NH/DQPg/8A543H/fI/xr41ooA+yv8AhoHwf/zxuP8Avkf40f8ADQPg/wD543H/AHyP8a+NaKAPsr/hoHwf/wA8bj/vkf40f8NA+D/+eNx/3yP8a+NaKAPsr/hoHwf/AM8bj/vkf40f8NA+D/8Anjcf98j/ABr41ooA+yv+GgfB/wDzxuP++R/jR/w0D4P/AOeNx/3yP8a+NaKAPsr/AIaB8H/88bj/AL5H+NH/AA0D4P8A+eNx/wB8j/GvjWigD7K/4aB8H/8APG4/75H+NH/DQPg//njcf98j/GvjWigD7K/4aB8H/wDPG4/75H+NH/DQPg//AJ43H/fI/wAa+NaKAPsr/hoHwf8A88bj/vkf40f8NA+D/wDnjcf98j/GvjWigD7K/wCGgfB//PG4/wC+R/jR/wANA+D/APnjcf8AfI/xr41ooA+yv+GgfB//ADxuP++R/jR/w0D4P/543H/fI/xr41ooA+yv+GgfB/8AzxuP++R/jR/w0D4P/wCeNx/3yP8AGvjWigD7K/4aB8H/APPG4/75H+NH/DQPg/8A543H/fI/xr41ooA+yv8AhoHwf/zxuP8Avkf40f8ADQPg/wD543H/AHyP8a+NaKAPsr/hoHwf/wA8bj/vkf40f8NA+D/+eNx/3yP8a+NaKAPsr/hoHwf/AM8bj/vkf40f8NA+D/8Anjcf98j/ABr41ooA+yv+GgfB/wDzxuP++R/jR/w0D4P/AOeNx/3yP8a+NaKAPsr/AIaB8H/88bj/AL5H+NH/AA0D4P8A+eNx/wB8j/GvjWigD7K/4aB8H/8APG4/75H+NH/DQPg//njcf98j/GvjWigD7K/4aB8H/wDPG4/75H+NH/DQPg//AJ43H/fI/wAa+NaKAPsr/hoHwf8A88bj/vkf40f8NA+D/wDnjcf98j/GvjWigD7K/wCGgfB//PG4/wC+R/jR/wANA+D/APnjcf8AfI/xr41ooA+yv+GgfB//ADxuP++R/jR/w0D4P/543H/fI/xr41ooA+yv+GgfB/8AzxuP++R/jR/w0D4P/wCeNx/3yP8AGvjWigD7K/4aB8H/APPG4/75H+NH/DQPg/8A543H/fI/xr41ooA+yv8AhoHwf/zxuP8Avkf40f8ADQPg/wD543H/AHyP8a+NaKAPsr/hoHwf/wA8bj/vkf40f8NA+D/+eNx/3yP8a+NaKAPsr/hoHwf/AM8bj/vkf40f8NA+D/8Anjcf98j/ABr41ooA+yv+GgfB/wDzxuP++R/jR/w0D4P/AOeNx/3yP8a+NaKAPsr/AIaB8H/88bj/AL5H+NH/AA0D4P8A+eNx/wB8j/GvjWigD7K/4aB8H/8APG4/75H+NH/DQPg//njcf98j/GvjWigD7K/4aB8H/wDPG4/75H+NH/DQPg//AJ43H/fI/wAa+NaKAPsr/hoHwf8A88bj/vkf418geP8A7P4q8d3niexcpDcSIyqw5AVVH9KqUUAf/9k=";
 
-const QUESTIONS = [
-  "Υπάρχει κάτι στη ζωή σου που θα ήθελες πολύ και δεν το έχεις αποκτήσει ακόμα — και γιατί;",
-  "Νιώθεις ότι η οικονομική σου κατάσταση σήμερα αντικατοπτρίζει την αξία σου και τις δυνατότητές σου;",
-  "Ποιος είναι ο ένας άνθρωπος για τον οποίο θα ήθελες να τα καταφέρεις — εκτός από τον εαυτό σου;",
-  "Αν τα χρήματα δεν ήταν πρόβλημα, τι θα άλλαζες πρώτο στη ζωή σου;",
-  "Έχεις νιώσει ποτέ ότι οι άλλοι προχωρούν και εσύ μένεις στάσιμος; Τι κάνεις με αυτό το συναίσθημα;",
-  "Τι θα έλεγες στον εαυτό σου σε 10 χρόνια αν δεν έκανες τώρα ένα βήμα;",
-  "Έχεις βρει την ευκαιρία που θα βοηθούσε εσένα και την οικογένειά σου να γίνεις οικονομικά ανεξάρτητος;",
-  "Αν μπορούσα να σου δείξω μία τέτοια ευκαιρία, θα ήθελες να αφιερώσεις χρόνο για να δεις τις λεπτομέρειες;",
-  "Πόσο χρόνο την ημέρα έχεις να επενδύσεις για να δημιουργήσεις επιπρόσθετο εισόδημα;",
-  "Είσαι έτοιμος — ή ακόμα ψάχνεις δικαιολογίες;"
+const MANAGER_PIN = "1234";
+const G="#3a7d2c", GL="#67bc2a", BG="#f2f8ef", TX="#1a2e14";
+
+const ACTS=[
+  {id:"contact_product",label:"Νέα επαφή προϊόντων",pts:5,icon:"📦"},
+  {id:"contact_collab",label:"Νέα επαφή συνεργασίας",pts:5,icon:"🤝"},
+  {id:"pres_product",label:"Παρουσίαση προϊόντων",pts:15,icon:"🎯"},
+  {id:"pres_collab",label:"Παρουσίαση συνεργασίας",pts:15,icon:"🚀"},
+  {id:"new_client",label:"Νέος πελάτης",pts:50,icon:"⭐"},
+  {id:"new_partner",label:"Νέος συνεργάτης",pts:100,icon:"🏆"},
+  {id:"followup",label:"Follow-up",pts:10,icon:"📞"},
+  {id:"stories",label:"Stories/Reels",pts:2,icon:"📱"},
+  {id:"seminar",label:"Σεμινάριο",pts:250,icon:"🎓"},
+  {id:"seminar_partner",label:"Συμμετοχή συνεργάτη σε σεμινάριο",pts:500,icon:"🌟"},
 ];
+const COLORS=["#f5c842","#ff6b6b","#4ecdc4","#a29bfe","#fd79a8","#fdcb6e","#6c5ce7","#00b894"];
 
-const YES_SIGNALS=["ναι","έτοιμος","έτοιμη","σίγουρα","απολύτως","φυσικά","θα ξεκινήσω","θα το κάνω","αποφάσισα","ξεκινώ","προχωράω"];
-const EMOTION_WORDS=["αγαπ","οικογέν","παιδ","μητέρ","πατέρ","σύντροφ","γυναίκ","άντρ","όνειρ","ελπ","χαρ","υπερήφαν","αξίζ","πιστεύ","θέλ","μπορ","αλλαγ","ελευθερ","γονε","αδερφ","κίνητρ","φίλ"];
-const FAMILY_WORDS=["παιδ","οικογέν","γυναίκ","άντρ","μητέρ","πατέρ","γονε","αδερφ","σύντροφ","μωρ","γιο","κόρ","φίλ","αγαπημέν"];
-const GOAL_WORDS=["σπίτι","αυτοκίν","εισόδημ","χρήμα","οικονομ","ανεξάρτητ","ελεύθερ","καινούργ","νέο","ταξίδ","λογαριασμ","διακοπ"];
-const NO_SIGNALS=["δεν ξέρω","ίσως","μάλλον","δεν είμαι σίγουρ","δεν νομίζω","αδύνατο"];
+// ============================================================
+// SUPABASE CONFIG
+// Βάλε εδώ το anon/JWT key σου (αρχίζει με eyJ...)
+// Supabase → Project Settings → API → Legacy anon key
+// ============================================================
+const SUPABASE_URL = 'https://osaycebwbfzksxhdcocw.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zYXljZWJ3YmZ6a3N4aGRjb2N3Iiwicm9sZSI6ImFub24iLCJpYXQiOj'; // eyJhbGci...
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let current=0, answers=new Array(10).fill(""), candidateName="", collaborator="", currentUser=null;
+// Telegram notification
+const TG_TOKEN = "8563009763:AAGSL708nJY4vPYLBIqENP5EIpimhHfeUTQ";
+const TG_CHAT_ID = "1086425892";
 
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
-}
-
-function checkName(){
-  document.getElementById('startBtn').disabled=!document.getElementById('nameInput').value.trim();
-}
-
-function startQuestions(){
-  candidateName=document.getElementById('nameInput').value.trim();
-  collaborator=document.getElementById('collabInput').value.trim()||"Άγνωστος";
-  current=0; answers=new Array(10).fill("");
-  renderQ(); showScreen('questions');
-}
-
-function renderQ(){
-  document.getElementById('qLabel').textContent='Ερώτηση '+(current+1);
-  document.getElementById('qCount').textContent=(current+1)+' / 10';
-  document.getElementById('progressFill').style.width=((current+1)/10*100)+'%';
-  document.getElementById('qNum').textContent='Ερώτηση '+(current+1);
-  document.getElementById('qText').textContent=QUESTIONS[current];
-  document.getElementById('answerInput').value=answers[current];
-  document.getElementById('prevBtn').style.display=current>0?'inline-block':'none';
-  document.getElementById('nextBtn').textContent=current===9?'Ολοκλήρωση':'Επόμενο →';
-}
-
-function saveA(){answers[current]=document.getElementById('answerInput').value;}
-function nextQ(){saveA();if(current<9){current++;renderQ();}else{showScreen('loading');setTimeout(finish,2000);}}
-function prevQ(){saveA();current--;renderQ();}
-
-function scoreOne(text,qi){
-  if(!text||text.trim().length===0)return 3;
-  const t=text.trim().toLowerCase();
-  if(qi===1){if(/όχι|δεν νιώθ|δεν αντικατοπτρίζ|χαμηλ|άδικ/.test(t))return 23;if(/ναι|ικανοποιημέν/.test(t))return 8;return 12;}
-  if(qi===0){const hg=/σπίτι|αυτοκίν|τραπεζικ|λογαριασμ|ταξίδ|χρήμα|εισόδημ|καινούργ|νέο|διακοπ/.test(t);const hf=FAMILY_WORDS.some(w=>t.includes(w));if(hg&&hf)return 25;if(hg)return 22;if(hf)return 20;}
-  if(qi===4){const hg=/σπίτι|αυτοκίν|ταξίδ|διακοπ|χρήμα|λογαριασμ|καινούργ|νέο|εισόδημ/.test(t);const hf=FAMILY_WORDS.some(w=>t.includes(w));if(hg&&hf)return 25;if(hg||hf)return 22;return 15;}
-  if(qi===6){if(/όχι|δεν έχ|δεν βρήκ/.test(t))return 22;if(/ναι|βρήκ/.test(t))return 18;return 14;}
-  if(qi===8){if(/πάνω από 4|[5-9]|10/.test(t))return 10;if(/[3-4]|τρεις|τέσσερις/.test(t))return 8;if(/[1-2]|μία|δύο/.test(t))return 5;return 3;}
-  const isShortYes=text.trim().length<30&&YES_SIGNALS.some(w=>t.includes(w));
-  if(isShortYes)return 22;
-  let score=10;
-  YES_SIGNALS.forEach(w=>{if(t.includes(w))score+=3;});
-  EMOTION_WORDS.forEach(w=>{if(t.includes(w))score+=2;});
-  const hg=GOAL_WORDS.some(w=>t.includes(w));const hf=FAMILY_WORDS.some(w=>t.includes(w));
-  if(hg)score+=5;if(hf)score+=6;if(hg&&hf)score+=4;
-  NO_SIGNALS.forEach(w=>{if(t.includes(w))score-=4;});
-  if(text.split(/\s+/).length>20)score+=2;
-  return Math.max(3,Math.min(25,score));
-}
-
-async function finish(){
-  const s=answers.map((a,i)=>scoreOne(a,i));
-  const emotional=Math.round((s[0]+s[2]+s[3])/3);
-  const decisive=Math.round((s[7]+s[9])/2);
-  const awareness=Math.round((s[1]+s[5])/2);
-  const motivation=Math.round((s[4]+s[6]+s[8])/3);
-  const total=emotional+decisive+awareness+motivation;
-  let rec,recText,analysis;
-  if(total>=65){rec={icon:"✦",title:"Είσαι έτοιμος!",color:"#c8963e",border:"rgba(200,140,50,0.35)",bg:"rgba(200,140,50,0.08)"};recText=candidateName+", είσαι έτοιμος να κάνεις το επόμενο βήμα.";analysis=candidateName+", οι απαντήσεις σου αποκαλύπτουν έναν άνθρωπο που ξέρει τι θέλει και είναι έτοιμος να δράσει.";}
-  else if(total>=40){rec={icon:"◎",title:"Χρειάζεσαι λίγο χρόνο",color:"#a89070",border:"rgba(168,144,112,0.3)",bg:"rgba(168,144,112,0.07)"};recText=candidateName+", υπάρχει δυναμική μέσα σου. Χρειάζεσαι λίγο ακόμα χρόνο.";analysis=candidateName+", οι απαντήσεις σου δείχνουν ενδιαφέρον με λίγη διστακτικότητα.";}
-  else{rec={icon:"○",title:"Δεν είναι η ώρα σου ακόμα",color:"#7a6a5a",border:"rgba(122,106,90,0.3)",bg:"rgba(122,106,90,0.07)"};recText=candidateName+", δεν είναι η ώρα σου ακόμα. Όταν νιώσεις έτοιμος, θα είμαστε εδώ.";analysis=candidateName+", οι απαντήσεις σου δείχνουν ότι χρειάζεσαι περισσότερο χρόνο.";}
-
-  // Get logged in user if any
-  const {data:{user}} = await sb.auth.getUser();
-  const uid = user ? user.id : null;
-
-  // Save to Supabase with timeout
+async function sendTelegram(msg) {
   try {
-    const insertPromise = sb.from('evaluations').insert({
-      candidate_name:candidateName, collaborator, total,
-      recommendation:rec.title, emotional_readiness:emotional,
-      decisiveness:decisive, self_awareness:awareness, motivation,
-      answers:answers.join(' | '), user_id: uid
+    await fetch("https://api.telegram.org/bot" + TG_TOKEN + "/sendMessage", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({chat_id: TG_CHAT_ID, text: msg, parse_mode: "HTML"})
     });
-    const timeoutPromise = new Promise((_,reject) => setTimeout(() => reject('timeout'), 5000));
-    await Promise.race([insertPromise, timeoutPromise]);
-  } catch(e) {
-    console.log('Save error:', e);
+  } catch(e) {}
+}
+
+// ============================================================
+// SUPABASE STORAGE (αντί για localStorage)
+// ============================================================
+const DB = {
+  // Φόρτωσε logs ενός συνεργάτη
+  async getLogs(name) {
+    const {data} = await sb.from('activity_logs')
+      .select('*')
+      .eq('member_name', name)
+      .order('log_date', {ascending: true});
+    if (!data) return {};
+    const logs = {};
+    data.forEach(row => {
+      if (!logs[row.log_date]) logs[row.log_date] = [];
+      logs[row.log_date].push({id: row.act_id, pts: row.pts, ts: new Date(row.created_at).getTime(), note: row.note || ''});
+    });
+    return logs;
+  },
+
+  // Αποθήκευσε log entry
+  async addLog(name, actId, pts, note) {
+    const today = todayKey();
+    await sb.from('activity_logs').insert({
+      member_name: name,
+      act_id: actId,
+      pts: pts,
+      log_date: today,
+      note: note || ''
+    });
+  },
+
+  // Φόρτωσε στόχο
+  async getGoal(name, monthPrefix) {
+    const {data} = await sb.from('goals')
+      .select('goal_pts')
+      .eq('member_name', name)
+      .eq('month_prefix', monthPrefix)
+      .single();
+    return data ? data.goal_pts : null;
+  },
+
+  // Αποθήκευσε στόχο
+  async setGoal(name, monthPrefix, pts) {
+    await sb.from('goals').upsert({
+      member_name: name,
+      month_prefix: monthPrefix,
+      goal_pts: pts
+    }, {onConflict: 'member_name,month_prefix'});
+  },
+
+  // Φόρτωσε PIN
+  async getPin(name) {
+    const {data} = await sb.from('members')
+      .select('pin')
+      .eq('name', name)
+      .single();
+    return data ? data.pin : null;
+  },
+
+  // Αποθήκευσε PIN (upsert)
+  async setPin(name, pin) {
+    await sb.from('members').upsert({name, pin}, {onConflict: 'name'});
+  },
+
+  // Λίστα συνεργατών
+  async getMembers() {
+    const {data} = await sb.from('members').select('name').order('name');
+    return data ? data.map(r => r.name) : [];
+  },
+
+  // Διαγραφή συνεργάτη
+  async deleteMember(name) {
+    await sb.from('activity_logs').delete().eq('member_name', name);
+    await sb.from('goals').delete().eq('member_name', name);
+    await sb.from('members').delete().eq('name', name);
+  },
+
+  // Φόρτωσε όλα για manager
+  async getAllData() {
+    const members = await this.getMembers();
+    const mk = mPrefix(), pmk = mPrefix(-1);
+    const allLogs = {}, allGoals = {}, allPrevGoals = {};
+    await Promise.all(members.map(async m => {
+      allLogs[m] = await this.getLogs(m);
+      allGoals[m] = await this.getGoal(m, mk);
+      allPrevGoals[m] = await this.getGoal(m, pmk);
+    }));
+    return {members, allLogs, allGoals, allPrevGoals};
+  }
+};
+
+// Helpers
+function todayKey(){return new Date().toISOString().slice(0,10);}
+function mPrefix(off=0){const d=new Date();d.setMonth(d.getMonth()+off);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");}
+function mName(off=0){const d=new Date();d.setMonth(d.getMonth()+off);return d.toLocaleDateString("el-GR",{month:"long",year:"numeric"});}
+function fmtFull(s){return new Date(s).toLocaleDateString("el-GR",{weekday:"long",day:"numeric",month:"long"});}
+function fmtDay(s){return new Date(s).toLocaleDateString("el-GR",{weekday:"short",day:"numeric"});}
+function fmtTime(ts){return new Date(ts).toLocaleTimeString("el-GR",{hour:"2-digit",minute:"2-digit"});}
+function sumAll(logs){return Object.values(logs||{}).flat().reduce((s,e)=>s+e.pts,0);}
+function todaySum(logs){return((logs||{})[todayKey()]||[]).reduce((s,e)=>s+e.pts,0);}
+function mSum(logs,off=0){const p=mPrefix(off);return Object.entries(logs||{}).filter(([k])=>k.startsWith(p)).flatMap(([,v])=>v).reduce((s,e)=>s+e.pts,0);}
+function daysInactive(logs){const ks=Object.keys(logs||{}).sort().reverse();if(!ks.length)return 999;return Math.floor((new Date(todayKey())-new Date(ks[0]))/86400000);}
+function getWeeks(){
+  const n=new Date(),y=n.getFullYear(),m=n.getMonth(),dim=new Date(y,m+1,0).getDate(),fd=new Date(y,m,1).getDay(),ws=[];
+  for(let w=1;w<=5;w++){const days=[];for(let d=1;d<=dim;d++){if(Math.ceil((d+fd)/7)===w)days.push(y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0"));}if(days.length)ws.push({w,days});}
+  return ws;
+}
+function wkPts(logs,days){return days.reduce((s,d)=>s+(logs[d]||[]).reduce((ss,e)=>ss+e.pts,0),0);}
+function curWkIdx(){const t=todayKey();return getWeeks().findIndex(w=>w.days.includes(t));}
+
+function BarChart({data,height=120}){
+  const max=Math.max(...data.map(d=>d.v),1);
+  const bw=28,gap=8,pad=4;
+  const w=data.length*(bw+gap)-gap+pad*2;
+  return `<svg width="100%" viewBox="0 0 ${w} ${height+24}" style="overflow:visible">
+    ${data.map((d,i)=>{
+      const bh=Math.max(2,(d.v/max)*(height-10));
+      const x=pad+i*(bw+gap);
+      const y=height-bh;
+      return `<rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="4" fill="${G}" opacity="${d.today?1:.7}"/>
+        <text x="${x+bw/2}" y="${height+14}" text-anchor="middle" font-size="9" fill="#aac89a" font-family="Nunito">${d.label}</text>
+        ${d.v>0?`<text x="${x+bw/2}" y="${y-3}" text-anchor="middle" font-size="9" fill="${G}" font-weight="800" font-family="Nunito">${d.v}</text>`:""}`;
+    }).join("")}
+  </svg>`;
+}
+
+// State
+let state={
+  screen:"login", mode:"member",
+  nameInput:"", pinInput:"", newPin:"",
+  user:null, logs:{}, goal:null,
+  members:[], allLogs:{}, allGoals:{}, allPrevGoals:{},
+  tab:"log", flash:null, popAnim:null,
+  selMember:null, noteAct:null, note:"",
+  pinSetup:false, loginErr:"",
+  showInstall:true, loading:false
+};
+
+function setState(patch){state={...state,...patch};render();}
+
+function showLoading(msg="Φορτώνει..."){
+  document.getElementById("app").innerHTML=`<div style="min-height:100vh;background:${BG};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+    <div style="width:40px;height:40px;border:3px solid #cce5c0;border-top:3px solid ${G};border-radius:50%;animation:spin 0.8s linear infinite"></div>
+    <div style="font-size:14px;color:#8ab870;font-weight:700">${msg}</div>
+  </div>`;
+}
+
+// ============================================================
+// AUTH / LOGIN FUNCTIONS (async με Supabase)
+// ============================================================
+async function doLoginMember(){
+  const name=state.nameInput.trim();
+  if(!name) return;
+  showLoading("Σύνδεση...");
+
+  const pin = await DB.getPin(name);
+
+  if(!pin){
+    // Νέος συνεργάτης
+    setState({user:name, pinSetup:true, loginErr:""});
+    return;
+  }
+  if(state.pinInput !== pin){
+    setState({loginErr:"Λάθος κωδικός!"});
+    return;
   }
 
-  document.getElementById('resName').textContent=candidateName;
-  document.getElementById('scoreTotal').textContent=total;
-  document.getElementById('analysisText').textContent=analysis;
-  const labels=[{label:'Συναισθηματική Ετοιμότητα',val:emotional},{label:'Αποφασιστικότητα',val:decisive},{label:'Αυτεπίγνωση',val:awareness},{label:'Κίνητρο',val:motivation}];
-  document.getElementById('criteriaList').innerHTML=labels.map(l=>`<div style="margin-bottom:20px"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:13px;color:rgba(240,220,180,0.55)">${l.label}</span><span style="font-size:13px;color:#c8963e;font-weight:600">${l.val}<span style="color:rgba(200,140,50,0.35);font-size:11px">/25</span></span></div><div style="height:3px;background:rgba(200,140,50,0.08);border-radius:2px;overflow:hidden"><div style="height:100%;width:${(l.val/25)*100}%;background:linear-gradient(90deg,#a8722e,#e8b86a);border-radius:2px"></div></div></div>`).join('');
-  const rb=document.getElementById('recBox');rb.style.background=rec.bg;rb.style.borderColor=rec.border;
-  document.getElementById('recIcon').textContent=rec.icon;document.getElementById('recIcon').style.color=rec.color;
-  document.getElementById('recTitle').textContent=rec.title;document.getElementById('recTitle').style.color=rec.color;
-  document.getElementById('recText').textContent=recText;
-  showScreen('results');
+  showLoading("Φόρτωση δεδομένων...");
+  const mk = mPrefix();
+  const logs = await DB.getLogs(name);
+  const goal = await DB.getGoal(name, mk);
+  setState({logs, goal, user:name, screen:"member", tab:"log", loginErr:""});
 }
 
-function openWA(){
-  const score=document.getElementById('scoreTotal').textContent;
-  const msg=encodeURIComponent(`Γεια σου! Μόλις συμπλήρωσα το ερωτηματολόγιο «Δες τι αξίζεις». Βαθμολογία: ${score}/100. — ${candidateName}`);
-  window.open(`https://wa.me/${WHATSAPP}?text=${msg}`,'_blank');
+async function doSavePin(){
+  if(state.newPin.length < 4){setState({loginErr:"Τουλάχιστον 4 ψηφία"});return;}
+  showLoading("Αποθήκευση...");
+  await DB.setPin(state.user, state.newPin);
+  const mk = mPrefix();
+  const logs = await DB.getLogs(state.user);
+  const goal = await DB.getGoal(state.user, mk);
+  setState({pinSetup:false, newPin:"", logs, goal, screen:"member", tab:"log", loginErr:""});
 }
 
-// AUTH
-async function doLogin(){
-  const email=document.getElementById('loginEmail').value.trim();
-  const pass=document.getElementById('loginPass').value;
-  const errEl=document.getElementById('loginErr');
-  errEl.style.display='none';
-  const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
-  if(error){errEl.textContent='Λάθος email ή κωδικός';errEl.style.display='block';return;}
-  await loadUserDashboard(data.user);
+async function doLoginManager(){
+  if(state.pinInput !== MANAGER_PIN){setState({loginErr:"Λάθος PIN"});return;}
+  showLoading("Φόρτωση ομάδας...");
+  const {members, allLogs, allGoals, allPrevGoals} = await DB.getAllData();
+  setState({members, allLogs, allGoals, allPrevGoals, screen:"manager", tab:"leaderboard", loginErr:""});
 }
 
-async function doRegister(){
-  const name=document.getElementById('regName').value.trim();
-  const email=document.getElementById('regEmail').value.trim();
-  const pass=document.getElementById('regPass').value;
-  const errEl=document.getElementById('regErr');
-  errEl.style.display='none';
-  if(!name||!email||!pass){errEl.textContent='Συμπλήρωσε όλα τα πεδία';errEl.style.display='block';return;}
-  if(pass.length<6){errEl.textContent='Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες';errEl.style.display='block';return;}
-  const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
-  if(error){errEl.textContent=error.message;errEl.style.display='block';return;}
-  await loadUserDashboard(data.user);
+async function doRefresh(){
+  showLoading("Ανανέωση...");
+  const {members, allLogs, allGoals, allPrevGoals} = await DB.getAllData();
+  setState({members, allLogs, allGoals, allPrevGoals});
 }
 
-async function doLogout(){
-  await sb.auth.signOut();
-  showScreen('home');
+async function doLogAct(act, note){
+  await DB.addLog(state.user, act.id, act.pts, note);
+  const today = todayKey();
+  const entry = {id:act.id, pts:act.pts, ts:Date.now(), note:note||""};
+  const logs = {...state.logs, [today]:[...(state.logs[today]||[]), entry]};
+  setState({logs, noteAct:null, note:"", flash:act.id, popAnim:`+${act.pts}`});
+  setTimeout(()=>setState({flash:null, popAnim:null}), 800);
+
+  // Telegram notification
+  const act_info = ACTS.find(a=>a.id===act.id);
+  sendTelegram(`${act_info.icon} <b>${state.user}</b> — ${act_info.label}\n+${act.pts} πόντοι${note?`\n💬 ${note}`:""}`);
 }
 
-async function loadUserDashboard(user){
-  currentUser=user;
-  if(user.email===MANAGER_EMAIL){
-    await loadManagerDashboard();
-  } else {
-    document.getElementById('dashName').textContent=user.user_metadata?.full_name||user.email;
-    await loadCollaboratorDashboard(user.id);
-    showScreen('dashboard');
+async function doSaveGoal(g){
+  const mk = mPrefix();
+  await DB.setGoal(state.user, mk, g);
+  setState({goal:g});
+}
+
+async function deleteMember(name){
+  if(!confirm("Διαγραφή του '" + name + "'; Τα δεδομένα του θα χαθούν!")) return;
+  showLoading("Διαγραφή...");
+  await DB.deleteMember(name);
+  const {members, allLogs, allGoals, allPrevGoals} = await DB.getAllData();
+  setState({members, allLogs, allGoals, allPrevGoals});
+}
+
+async function doSendReport(){
+  const mk=mPrefix();
+  const members = await DB.getMembers();
+  if(!members.length){alert("Δεν υπάρχουν συνεργάτες ακόμα.");return;}
+
+  let msg = "📊 <b>ΑΝΑΦΟΡΑ ΟΜΑΔΑΣ — " + mName().toUpperCase() + "</b>\n";
+  msg += "━━━━━━━━━━━━━━\n";
+
+  const board = await Promise.all(members.map(async (m,i) => {
+    const logs = await DB.getLogs(m);
+    const goal = await DB.getGoal(m, mk);
+    const mp=mSum(logs), tp=todaySum(logs), inactive=daysInactive(logs);
+    const pct=goal?Math.min(100,Math.round((mp/goal)*100)):null;
+    return{name:m,mp,tp,goal,pct,inactive,total:sumAll(logs)};
+  }));
+  board.sort((a,b)=>b.total-a.total);
+
+  board.forEach((m,i)=>{
+    const medal=i===0?"🥇":i===1?"🥈":i===2?"🥉":"▪️";
+    msg += "\n"+medal+" <b>"+m.name+"</b>\n";
+    msg += "   Σήμερα: "+m.tp+" pts | Μήνας: "+m.mp+" pts\n";
+    if(m.goal) msg += "   Στόχος: "+m.pct+"%  ("+m.mp+"/"+m.goal+")\n";
+    if(m.inactive>=3) msg += "   ⚠️ "+m.inactive+" μέρες αδράνεια\n";
+  });
+
+  msg += "\n━━━━━━━━━━━━━━\n";
+  msg += "👥 Σύνολο ομάδας σήμερα: <b>"+board.reduce((s,m)=>s+m.tp,0)+" pts</b>\n";
+  msg += "📈 Σύνολο ομάδας μήνα: <b>"+board.reduce((s,m)=>s+m.mp,0)+" pts</b>";
+
+  fetch("https://api.telegram.org/bot"+TG_TOKEN+"/sendMessage",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({chat_id:TG_CHAT_ID,text:msg,parse_mode:"HTML"})
+  }).then(r=>{
+    if(r.ok) alert("✅ Η αναφορά στάλθηκε στο Telegram!");
+    else alert("❌ Σφάλμα αποστολής.");
+  }).catch(()=>alert("❌ Σφάλμα σύνδεσης."));
+}
+
+function doLogout(){
+  setState({screen:"login",nameInput:"",pinInput:"",newPin:"",user:null,logs:{},goal:null,allLogs:{},allGoals:{},allPrevGoals:{},members:[],selMember:null,loginErr:"",pinSetup:false});
+}
+
+    const allLogs={},allGoals={},allPrevGoals={};
+    list.forEach(m=>{allLogs[m]=S.get(LP+m)||{};allGoals[m]=S.get(GP+m+"_"+mk);allPrevGoals[m]=S.get(GP+m+"_"+pmk);});
+    setState({members:list,allLogs,allGoals,allPrevGoals});
   }
+  function doSendReport(){
+    const mk=mPrefix();
+    const list=S.get(MK)||[];
+    if(!list.length){alert("Δεν υπάρχουν συνεργάτες ακόμα.");return;}
+    
+    let msg = "📊 <b>ΑΝΑΦΟΡΑ ΟΜΑΔΑΣ — " + mName().toUpperCase() + "</b>\n";
+    msg += "━━━━━━━━━━━━━━\n";
+    
+    const board=list.map(m=>{
+      const logs=S.get(LP+m)||{};
+      const goal=S.get(GP+m+"_"+mk);
+      const mp=mSum(logs);
+      const tp=todaySum(logs);
+      const inactive=daysInactive(logs);
+      const pct=goal?Math.min(100,Math.round((mp/goal)*100)):null;
+      return{name:m,mp,tp,goal,pct,inactive,total:sumAll(logs)};
+    }).sort((a,b)=>b.total-a.total);
+    
+    board.forEach((m,i)=>{
+      const medal=i===0?"🥇":i===1?"🥈":i===2?"🥉":"▪️";
+      msg += "\n"+medal+" <b>"+m.name+"</b>\n";
+      msg += "   Σήμερα: "+m.tp+" pts | Μήνας: "+m.mp+" pts\n";
+      if(m.goal) msg += "   Στόχος: "+m.pct+"%  ("+m.mp+"/"+m.goal+")\n";
+      if(m.inactive>=3) msg += "   ⚠️ "+m.inactive+" μέρες αδράνεια\n";
+    });
+    
+    msg += "\n━━━━━━━━━━━━━━\n";
+    msg += "👥 Σύνολο ομάδας σήμερα: <b>"+board.reduce((s,m)=>s+m.tp,0)+" pts</b>\n";
+    msg += "📈 Σύνολο ομάδας μήνα: <b>"+board.reduce((s,m)=>s+m.mp,0)+" pts</b>";
+    
+    fetch("https://api.telegram.org/bot"+TG_TOKEN+"/sendMessage",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({chat_id:TG_CHAT_ID,text:msg,parse_mode:"HTML"})
+    }).then(r=>{
+      if(r.ok) alert("✅ Η αναφορά στάλθηκε στο Telegram!");
+      else alert("❌ Σφάλμα αποστολής. Δοκίμασε ξανά.");
+    }).catch(()=>alert("❌ Σφάλμα σύνδεσης."));
+  }
+  
+function doLogout(){
+  setState({screen:"login",nameInput:"",pinInput:"",newPin:"",user:null,logs:{},goal:null,allLogs:{},allGoals:{},allPrevGoals:{},members:[],selMember:null,loginErr:"",pinSetup:false});
 }
 
-async function loadCollaboratorDashboard(uid){
-  const el=document.getElementById('dashList');
-  el.innerHTML='<p style="color:rgba(200,140,50,0.4);text-align:center;margin-top:40px">Φορτώνει...</p>';
-  const {data}=await sb.from('evaluations').select('*').eq('user_id',uid).order('created_at',{ascending:false});
-  if(!data||!data.length){el.innerHTML='<p style="color:rgba(200,140,50,0.28);text-align:center;margin-top:80px">Δεν έχεις αξιολογήσεις ακόμα.</p>';return;}
-  el.innerHTML=`<p style="font-size:12px;color:rgba(200,140,50,0.3);letter-spacing:2px;margin-bottom:20px">${data.length} ΑΞΙΟΛΟΓΗΣΗ${data.length!==1?'ΕΙΣ':''}</p>`+
-  data.map((r,i)=>`<div style="background:rgba(200,140,50,0.04);border:1px solid rgba(200,140,50,0.1);border-radius:14px;padding:18px 20px;margin-bottom:12px;cursor:pointer" onclick="showEval(${i},'dash')">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div><p style="font-size:17px;color:#f5e6c8;font-weight:600;margin-bottom:4px">${r.candidate_name}</p><p style="font-size:12px;color:rgba(200,140,50,0.4)">${new Date(r.created_at).toLocaleDateString('el-GR')}</p></div>
-      <div style="font-size:30px;font-weight:700;color:#c8963e">${r.total}</div>
-    </div></div>`).join('');
-  window._dashData=data;
+// Render helpers
+function h(tag,attrs,inner){
+  const a=Object.entries(attrs||{}).map(([k,v])=>{
+    if(k==="style"&&typeof v==="object")return `style="${Object.entries(v).map(([sk,sv])=>sk.replace(/([A-Z])/g,c=>"-"+c.toLowerCase())+":"+sv).join(";")}"`;
+    if(k==="class")return `class="${v}"`;
+    if(k.startsWith("on"))return ``;
+    return `${k}="${v}"`;
+  }).join(" ");
+  const selfClose=["input","img","br","hr"].includes(tag);
+  if(selfClose)return `<${tag} ${a}>`;
+  return `<${tag} ${a}>${Array.isArray(inner)?inner.join(""):inner||""}</${tag}>`;
 }
 
-async function loadManagerDashboard(){
-  const el=document.getElementById('managerList');
-  el.innerHTML='<p style="color:rgba(200,140,50,0.4);text-align:center;margin-top:40px">Φορτώνει...</p>';
-  const {data}=await sb.from('evaluations').select('*').order('created_at',{ascending:false});
-  if(!data||!data.length){el.innerHTML='<p style="color:rgba(200,140,50,0.28);text-align:center;margin-top:80px">Δεν υπάρχουν αξιολογήσεις ακόμα.</p>';showScreen('manager');return;}
-  
-  // Group by collaborator
-  const byCollab={};
-  data.forEach(r=>{if(!byCollab[r.collaborator])byCollab[r.collaborator]=[];byCollab[r.collaborator].push(r);});
-  
-  el.innerHTML=`<p style="font-size:12px;color:rgba(200,140,50,0.3);letter-spacing:2px;margin-bottom:24px">${data.length} ΣΥΝΟΛΙΚΕΣ ΑΞΙΟΛΟΓΗΣΕΙΣ</p>`+
-  Object.entries(byCollab).map(([collab,evals])=>`
-    <div style="background:rgba(200,140,50,0.04);border:1px solid rgba(200,140,50,0.12);border-radius:14px;padding:18px 20px;margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <p style="font-size:16px;color:#f5e6c8;font-weight:600">${collab}</p>
-        <p style="font-size:12px;color:rgba(200,140,50,0.5)">${evals.length} αξιολογήσεις</p>
+function Logo(ht=36){return `<img src="${LOGO_SRC}" alt="Herbalife" style="height:${ht}px;object-fit:contain">`;}
+
+function ProgressBar(pct,color,height=10){
+  const c=color||( pct>=75?G:pct>=50?"#e6a817":"#e05252");
+  return `<div class="pb-bg" style="height:${height}px"><div class="pb-fill" style="width:${Math.min(100,pct)}%;height:${height}px;background:${c}"></div></div>`;
+}
+
+function GoalSection(logs,goal){
+  const weeks=getWeeks(),cwi=curWkIdx();
+  const mp=mSum(logs),wg=goal?Math.round(goal/weeks.length):0;
+  const pct=goal?Math.min(100,Math.round((mp/goal)*100)):0;
+  const status=!goal?"":`<div style="font-size:13px;margin-top:8px;font-weight:700;color:#555">${pct>=100?"✅ Στόχος επιτεύχθηκε!":pct>=75?"🔥 Πολύ κοντά!":pct>=50?"💪 Στα μισά, συνέχισε!":pct>=25?"⚠️ Χρειάζεσαι επιτάχυνση":"🚨 Πίσω από τον στόχο"}</div>`;
+  const weekRows=weeks.map(({w,days},idx)=>{
+    const wpts=wkPts(logs,days),wpct=wg?Math.min(100,Math.round((wpts/wg)*100)):0;
+    const isCur=idx===cwi,isPast=idx<cwi,isOk=wpts>=wg;
+    return `<div style="margin-bottom:8px;opacity:${idx>cwi?0.4:1}">
+      <div style="display:flex;justify-content:space-between;font-size:13px">
+        <span style="font-weight:${isCur?900:600};color:${isCur?G:"#6a9a5a"}">${isCur?"▶ ":""}Εβδομάδα ${w}</span>
+        <span style="font-weight:700;color:${isPast&&!isOk?"#e05252":G}">${wpts}/${wg} ${isPast?(isOk?"✅":"❌"):""}</span>
       </div>
-      ${evals.map((r,i)=>`<div style="padding:10px 0;border-top:1px solid rgba(200,140,50,0.07);display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="showMgrEval('${collab}',${i})">
-        <p style="font-size:14px;color:rgba(240,220,180,0.7)">${r.candidate_name}</p>
-        <div style="display:flex;align-items:center;gap:12px">
-          <span style="font-size:18px;font-weight:700;color:#c8963e">${r.total}</span>
-          <button onclick="event.stopPropagation();openWAMgr('${r.candidate_name}','${r.total}')" style="background:linear-gradient(135deg,#25d366,#1aab52);border:none;border-radius:8px;padding:6px 12px;color:#fff;font-size:12px;cursor:pointer">WA</button>
+      ${ProgressBar(wpct,isPast&&!isOk?"#e05252":G,7)}
+    </div>`;
+  }).join("");
+
+  if(!goal)return `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div style="font-weight:800;font-size:14px;color:${G}">🎯 Μηνιαίος Στόχος — ${mName()}</div>
+      <button class="btn ghost" style="font-size:12px;padding:4px 10px" onclick="setState({goalEditing:true,goalInput:''})">Ορισμός</button>
+    </div>
+    <div style="font-size:13px;color:#aac89a">Ορίσε μηνιαίο στόχο για να παρακολουθείς την πρόοδό σου.</div>
+  </div>`;
+
+  return `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div style="font-weight:800;font-size:14px;color:${G}">🎯 Μηνιαίος Στόχος — ${mName()}</div>
+      <button class="btn ghost" style="font-size:12px;padding:4px 10px" onclick="setState({goalEditing:true,goalInput:'${goal}'})">Αλλαγή</button>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;color:#6a9a5a;margin-bottom:4px">
+      <span>${mp} / ${goal} πόντοι</span>
+      <span style="font-weight:800;color:${pct>=75?G:pct>=50?"#e6a817":"#e05252"}">${pct}%</span>
+    </div>
+    ${ProgressBar(pct)}
+    ${status}
+    <div style="margin-top:14px">
+      <div style="font-size:11px;color:#8ab870;font-weight:800;letter-spacing:.1em;margin-bottom:8px">ΕΒΔΟΜΑΔΙΑΙΑ ΑΝΑΛΥΣΗ</div>
+      ${weekRows}
+    </div>
+  </div>`;
+}
+
+function render(){
+  const s=state;
+  let html="";
+
+  // POP ANIM
+  const pop=s.popAnim?`<div class="pop-anim" style="transform:translate(-50%,-50%)">${s.popAnim}</div>`:"";
+
+  // GOAL EDITING MODAL
+  if(s.goalEditing){
+    html=`<div class="modal-overlay">
+      <div class="card" style="width:100%;max-width:380px">
+        <div style="font-weight:800;font-size:16px;color:${G};margin-bottom:16px">🎯 Ορισμός Μηνιαίου Στόχου</div>
+        <div style="font-size:13px;color:#6a9a5a;margin-bottom:8px">Πόντοι για ${mName()}</div>
+        <input class="inp" type="number" placeholder="π.χ. 200" value="${s.goalInput||""}" id="ginp" style="margin-bottom:12px">
+        <div style="display:flex;gap:10px">
+          <button class="btn ghost" style="flex:1" onclick="setState({goalEditing:false})">Ακύρωση</button>
+          <button class="btn gbtn" style="flex:2" onclick="const v=parseInt(document.getElementById('ginp').value);if(v>0){doSaveGoal(v);setState({goalEditing:false});}">Αποθήκευση</button>
         </div>
-      </div>`).join('')}
-    </div>`).join('');
-  
-  window._mgrData=byCollab;
-  showScreen('manager');
-}
-
-function showEval(i,type){
-  const r=window._dashData[i];
-  showEvalDetail(r,'dashboard');
-}
-
-function showMgrEval(collab,i){
-  const r=window._mgrData[collab][i];
-  showEvalDetail(r,'manager');
-}
-
-function showEvalDetail(r,backScreen){
-  const answersList=r.answers?r.answers.split(' | '):[];
-  const el=document.getElementById(backScreen==='dashboard'?'dashList':'managerList');
-  el.innerHTML=`<button onclick="${backScreen==='dashboard'?'loadCollaboratorDashboard(currentUser.id)':'loadManagerDashboard()'}" style="background:transparent;border:none;color:rgba(200,140,50,0.4);font-size:13px;cursor:pointer;margin-bottom:28px;padding:0;letter-spacing:1px">← Πίσω</button>
-  <h2 style="font-size:28px;color:#f5e6c8;margin-bottom:4px">${r.candidate_name}</h2>
-  <p style="font-size:12px;color:rgba(200,140,50,0.35);margin-bottom:32px">${new Date(r.created_at).toLocaleDateString('el-GR')} · ${r.collaborator}</p>
-  <div style="text-align:center;padding:28px 0;border-top:1px solid rgba(200,140,50,0.1);border-bottom:1px solid rgba(200,140,50,0.1);margin-bottom:32px">
-    <div style="font-size:72px;font-weight:700;color:#c8963e;line-height:1">${r.total}</div>
-    <div style="font-size:11px;color:rgba(200,140,50,0.28);letter-spacing:3px;margin-top:8px">/ 100</div>
-  </div>
-  ${[{k:'emotional_readiness',l:'Συναισθηματική Ετοιμότητα'},{k:'decisiveness',l:'Αποφασιστικότητα'},{k:'self_awareness',l:'Αυτεπίγνωση'},{k:'motivation',l:'Κίνητρο'}].map(x=>`<div style="margin-bottom:18px"><div style="display:flex;justify-content:space-between;margin-bottom:7px"><span style="font-size:13px;color:rgba(240,220,180,0.55)">${x.l}</span><span style="font-size:13px;color:#c8963e">${r[x.k]}/25</span></div><div style="height:3px;background:rgba(200,140,50,0.08);border-radius:2px;overflow:hidden"><div style="height:100%;width:${(r[x.k]/25)*100}%;background:linear-gradient(90deg,#a8722e,#e8b86a);border-radius:2px"></div></div></div>`).join('')}
-  <p style="font-size:11px;letter-spacing:3px;color:rgba(200,140,50,0.3);text-transform:uppercase;margin:28px 0 20px">Απαντήσεις</p>
-  ${QUESTIONS.map((q,i)=>`<div style="margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid rgba(200,140,50,0.07)"><p style="font-size:12px;color:rgba(200,140,50,0.4);margin-bottom:8px;line-height:1.6">${q}</p><p style="font-size:14px;color:rgba(240,220,180,0.7);line-height:1.75">${answersList[i]||'—'}</p></div>`).join('')}
-  <button onclick="openWAMgr('${r.candidate_name}','${r.total}')" style="width:100%;background:linear-gradient(135deg,#25d366,#1aab52);border:none;border-radius:12px;padding:16px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'Lato',sans-serif;margin-top:8px">💬 WhatsApp με τον ${r.candidate_name}</button>`;
-}
-
-function openWAMgr(name,total){
-  const msg=encodeURIComponent(`Γεια σου ${name}! Είδα τα αποτελέσματά σου (${total}/100) και θα ήθελα να μιλήσουμε.`);
-  window.open(`https://wa.me/${WHATSAPP}?text=${msg}`,'_blank');
-}
-
-// Check if already logged in
-sb.auth.onAuthStateChange(async(event,session)=>{
-  if(session?.user&&window.location.hash!=='#home'){
-    await loadUserDashboard(session.user);
+      </div>
+    </div>`;
+    document.getElementById("app").innerHTML=html;
+    setTimeout(()=>document.getElementById("ginp")&&document.getElementById("ginp").focus(),50);
+    return;
   }
-});
 
-// Mobile-friendly button listeners
-document.addEventListener('DOMContentLoaded', function() {
-  const loginBtn = document.getElementById('loginBtn');
-  if(loginBtn) {
-    loginBtn.addEventListener('click', doLogin);
-    loginBtn.addEventListener('touchend', function(e) { e.preventDefault(); doLogin(); });
+  // NOTE MODAL
+  if(s.noteAct){
+    const a=s.noteAct;
+    html=`<div class="modal-overlay">
+      <div class="card" style="width:100%;max-width:380px">
+        <div style="font-size:30px;text-align:center;margin-bottom:8px">${a.icon}</div>
+        <div style="font-weight:900;font-size:17px;color:${G};text-align:center;margin-bottom:4px">${a.label}</div>
+        <div style="font-size:13px;color:#8ab870;text-align:center;margin-bottom:16px">+${a.pts} πόντοι</div>
+        <div style="font-size:13px;color:#6a9a5a;font-weight:700;margin-bottom:8px">Σχόλιο (προαιρετικό)</div>
+        <input class="inp" id="ninp" placeholder="π.χ. Μαρία, ενδιαφέρον για αδυνάτισμα" value="${s.note}" oninput="state.note=this.value" style="margin-bottom:14px">
+        <div style="display:flex;gap:10px">
+          <button class="btn ghost" style="flex:1" onclick="setState({noteAct:null,note:''})">Ακύρωση</button>
+          <button class="btn gbtn" style="flex:2" onclick="doLogAct(state.noteAct,state.note)">Καταγραφή ✓</button>
+        </div>
+      </div>
+    </div>`;
+    document.getElementById("app").innerHTML=html;
+    setTimeout(()=>document.getElementById("ninp")&&document.getElementById("ninp").focus(),50);
+    return;
   }
-  const regBtn = document.getElementById('regBtn');
-  if(regBtn) {
-    regBtn.addEventListener('click', doRegister);
-    regBtn.addEventListener('touchend', function(e) { e.preventDefault(); doRegister(); });
+
+  // PIN SETUP
+  if(s.pinSetup){
+    html=`<div style="min-height:100vh;background:${BG};display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px">
+      ${Logo(44)}
+      <div style="margin-top:24px;margin-bottom:8px;font-weight:900;font-size:18px;color:${G}">Γεια, ${s.user}! 👋</div>
+      <div style="font-size:14px;color:#6a9a5a;margin-bottom:28px;text-align:center">Ορίσε έναν προσωπικό κωδικό<br>(τουλάχιστον 4 ψηφία)</div>
+      <div style="width:100%;max-width:360px;display:flex;flex-direction:column;gap:12px">
+        <input class="inp" type="password" placeholder="π.χ. 1234" id="npinp" oninput="state.newPin=this.value">
+        ${s.loginErr?`<div style="color:#e05252;font-size:13px;font-weight:700">${s.loginErr}</div>`:""}
+        <button class="btn gbtn" onclick="doSavePin()">Αποθήκευση →</button>
+      </div>
+    </div>`;
+    document.getElementById("app").innerHTML=html;
+    setTimeout(()=>document.getElementById("npinp")&&document.getElementById("npinp").focus(),50);
+    return;
   }
-});
+
+  // LOGIN
+  if(s.screen==="login"){
+    const isMember=s.mode==="member";
+    html=`<div style="min-height:100vh;background:${BG};display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px">
+      <div style="margin-bottom:10px">${Logo(52)}</div>
+      <div style="font-size:12px;color:#8ab870;letter-spacing:.2em;font-weight:700;margin-bottom:36px">TEAM TRACKER</div>
+      <div style="width:100%;max-width:360px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:8px;margin-bottom:4px">
+          <button class="btn ghost ${isMember?"on":""}" style="flex:1" onclick="setState({mode:'member',loginErr:''})">Συνεργάτης</button>
+          <button class="btn ghost ${!isMember?"on":""}" style="flex:1" onclick="setState({mode:'manager',loginErr:''})">Coach</button>
+        </div>
+        ${isMember?`
+          <div style="font-size:13px;color:#6a9a5a;font-weight:700">Όνομα</div>
+          <input class="inp" id="ni" placeholder="π.χ. Νατάσσα" value="${s.nameInput}" oninput="state.nameInput=this.value">
+          <div style="font-size:13px;color:#6a9a5a;font-weight:700">Κωδικός</div>
+          <input class="inp" id="pi" type="password" placeholder="••••" value="${s.pinInput}" oninput="state.pinInput=this.value">
+          ${s.loginErr?`<div style="color:#e05252;font-size:13px;font-weight:700">${s.loginErr}</div>`:""}
+          <button class="btn gbtn" onclick="doLoginMember()" ${!s.nameInput.trim()?"disabled":""}>Είσοδος →</button>
+          <div style="font-size:12px;color:#aac89a;text-align:center">Νέος; Γράψε το όνομά σου και θα ορίσεις κωδικό.</div>
+        `:`
+          <div style="font-size:13px;color:#6a9a5a;font-weight:700">PIN Coach</div>
+          <input class="inp" id="pi" type="password" placeholder="••••" value="${s.pinInput}" oninput="state.pinInput=this.value">
+          ${s.loginErr?`<div style="color:#e05252;font-size:13px;font-weight:700">${s.loginErr}</div>`:""}
+          <button class="btn gbtn" onclick="doLoginManager()">Είσοδος →</button>
+          
+        `}
+      </div>
+    </div>`;
+    document.getElementById("app").innerHTML=html;
+    return;
+  }
+
+  // MEMBER DETAIL
+  if(s.screen==="manager"&&s.selMember){
+    const m=s.selMember,ml=s.allLogs[m]||{},mi=s.members.indexOf(m);
+    const mg=s.allGoals[m],mp=mSum(ml),mprev=mSum(ml,-1);
+    const mpct=mg?Math.min(100,Math.round((mp/mg)*100)):null;
+    const inactive=daysInactive(ml);
+    const weeks=getWeeks(),wg=mg?Math.round(mg/weeks.length):null;
+
+    const actSum=ACTS.map(a=>{
+      const all=Object.values(ml).flat().filter(e=>e.id===a.id);
+      if(!all.length)return"";
+      return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f0f6ee">
+        <span style="font-size:20px">${a.icon}</span>
+        <div style="flex:1;font-size:14px">${a.label}</div>
+        <span style="font-size:13px;color:#8ab870;margin-right:6px">×${all.length}</span>
+        <span class="badge">+${all.reduce((s,e)=>s+e.pts,0)} pts</span>
+      </div>`;
+    }).join("");
+
+    const dayLogs=Object.keys(ml).sort((a,b)=>b.localeCompare(a)).map(day=>{
+      const entries=ml[day]||[],pts=entries.reduce((s,e)=>s+e.pts,0);
+      const rows=entries.sort((a,b)=>a.ts-b.ts).map(en=>{
+        const act=ACTS.find(a=>a.id===en.id);if(!act)return"";
+        return `<div class="row">
+          <span style="font-size:20px">${act.icon}</span>
+          <div style="flex:1"><div style="font-size:14px">${act.label}</div>${en.note?`<div style="font-size:12px;color:#8ab870;margin-top:2px">💬 ${en.note}</div>`:""}</div>
+          <span style="font-size:12px;color:#aac89a">${fmtTime(en.ts)}</span>
+          <span style="font-weight:800;color:${GL};font-size:14px">+${en.pts}</span>
+        </div>`;
+      }).join("");
+      return `<div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:10px"><div style="font-weight:800;font-size:14px;color:${G}">${fmtFull(day)}</div><span class="badge">${pts} pts</span></div>${rows}</div>`;
+    }).join("<div style='height:10px'></div>");
+
+    const wkRows=!mg?"":weeks.map(({w,days},idx)=>{
+      const wpts=wkPts(ml,days),wpct=wg?Math.min(100,Math.round((wpts/wg)*100)):0;
+      const ci=curWkIdx(),isPast=idx<ci,isOk=wpts>=wg;
+      return `<div style="margin-bottom:7px;opacity:${idx>ci?0.4:1}">
+        <div style="display:flex;justify-content:space-between;font-size:13px">
+          <span style="color:#6a9a5a">Εβδομάδα ${w}</span>
+          <span style="font-weight:700;color:${isPast&&!isOk?"#e05252":G}">${wpts}/${wg} ${isPast?(isOk?"✅":"❌"):""}</span>
+        </div>
+        ${ProgressBar(wpct,isPast&&!isOk?"#e05252":G,6)}
+      </div>`;
+    }).join("");
+
+    html=`${pop}
+    <div style="min-height:100vh;background:${BG};padding-bottom:60px">
+      <div class="hdr">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="hdr-btn" onclick="setState({selMember:null})">←</button>
+          <div>
+            <div style="font-weight:900;font-size:17px;color:#fff">${m}</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.7)">${sumAll(ml)} πόντοι${inactive>=3?` ⚠️ ${inactive} μέρες αδράνεια`:""}</div>
+          </div>
+        </div>
+        ${Logo(28)}
+      </div>
+      <div style="padding:14px 20px;display:flex;flex-direction:column;gap:12px">
+        <div class="card">
+          <div style="font-weight:800;font-size:14px;color:${G};margin-bottom:12px">📈 Σύγκριση Μηνών</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:#f5f5f5;border-radius:10px;padding:12px">
+              <div style="font-size:11px;color:#999;font-weight:700">${mName(-1).toUpperCase()}</div>
+              <div style="font-size:28px;font-weight:900;color:#aaa">${mprev}</div>
+            </div>
+            <div style="background:#eaf6e4;border-radius:10px;padding:12px;border:2px solid ${G}">
+              <div style="font-size:11px;color:${G};font-weight:700">${mName().toUpperCase()}</div>
+              <div style="font-size:28px;font-weight:900;color:${G}">${mp}${mprev>0?`<span style="font-size:14px;margin-left:6px;color:${mp>=mprev?G:"#e05252"}">${mp>=mprev?"▲":"▼"}${Math.abs(mp-mprev)}</span>`:""}</div>
+            </div>
+          </div>
+        </div>
+        ${mg?`<div class="card">
+          <div style="font-weight:800;font-size:14px;color:${G};margin-bottom:8px">🎯 Μηνιαίος Στόχος — ${mName()}</div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:#6a9a5a;margin-bottom:4px">
+            <span>${mp} / ${mg}</span><span style="font-weight:800;color:${mpct>=75?G:mpct>=50?"#e6a817":"#e05252"}">${mpct}%</span>
+          </div>
+          ${ProgressBar(mpct)}
+          <div style="margin-top:12px">${wkRows}</div>
+        </div>`:`<div class="card" style="font-size:13px;color:#aac89a">Δεν έχει οριστεί στόχος.</div>`}
+        <div class="card">
+          <div style="font-size:11px;color:#8ab870;font-weight:800;letter-spacing:.1em;margin-bottom:12px">ΣΥΝΟΛΟ ΑΝΑ ΔΡΑΣΤΗΡΙΟΤΗΤΑ</div>
+          ${actSum||"<div style='font-size:13px;color:#aac89a'>Καμία δραστηριότητα ακόμα.</div>"}
+        </div>
+        ${dayLogs}
+      </div>
+    </div>`;
+    document.getElementById("app").innerHTML=html;
+    return;
+  }
+
+  // MEMBER SCREEN
+  if(s.screen==="member"){
+    const tc={};(s.logs[todayKey()]||[]).forEach(e=>{tc[e.id]=(tc[e.id]||0)+1;});
+    const last7=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return d.toISOString().slice(0,10);});
+    const chartData=last7.map(d=>({label:fmtDay(d),v:(s.logs[d]||[]).reduce((ss,e)=>ss+e.pts,0),today:d===todayKey()}));
+
+    const actGrid=ACTS.map(a=>`<button class="act-btn ${s.flash===a.id?"fl":""}" onclick="setState({noteAct:ACTS.find(x=>x.id==='${a.id}'),note:''})">
+      <div style="font-size:26px;margin-bottom:6px">${a.icon}</div>
+      <div style="font-size:13px;color:#6a8a5a;line-height:1.3;margin-bottom:8px">${a.label}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="badge">+${a.pts}</span>
+        ${tc[a.id]>0?`<span style="font-size:12px;color:#aac89a">×${tc[a.id]}</span>`:""}
+      </div>
+    </button>`).join("");
+
+    const monthComp=`<div class="card">
+      <div style="font-weight:800;font-size:14px;color:${G};margin-bottom:12px">📈 Σύγκριση Μηνών</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#f5f5f5;border-radius:10px;padding:12px">
+          <div style="font-size:11px;color:#999;font-weight:700">${mName(-1).toUpperCase()}</div>
+          <div style="font-size:28px;font-weight:900;color:#aaa">${mSum(s.logs,-1)}</div>
+        </div>
+        <div style="background:#eaf6e4;border-radius:10px;padding:12px;border:2px solid ${G}">
+          <div style="font-size:11px;color:${G};font-weight:700">${mName().toUpperCase()}</div>
+          <div style="font-size:28px;font-weight:900;color:${G}">${mSum(s.logs)}</div>
+        </div>
+      </div>
+    </div>`;
+
+    const histItems=Object.keys(s.logs).sort((a,b)=>b.localeCompare(a)).map(day=>{
+      const entries=s.logs[day]||[],pts=entries.reduce((s,e)=>s+e.pts,0);
+      const rows=entries.sort((a,b)=>a.ts-b.ts).map(en=>{
+        const act=ACTS.find(a=>a.id===en.id);if(!act)return"";
+        return `<div class="row"><span style="font-size:20px">${act.icon}</span><div style="flex:1"><div style="font-size:14px">${act.label}</div>${en.note?`<div style="font-size:12px;color:#8ab870;margin-top:2px">💬 ${en.note}</div>`:""}</div><span style="font-size:12px;color:#aac89a">${fmtTime(en.ts)}</span><span style="font-weight:800;color:${GL};font-size:14px">+${en.pts}</span></div>`;
+      }).join("");
+      return `<div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:10px"><div style="font-weight:800;font-size:14px;color:${G}">${fmtFull(day)}</div><span class="badge">${pts} pts</span></div>${rows}</div>`;
+    }).join("<div style='height:10px'></div>");
+
+    const installBanner=s.showInstall?`<div style="background:#fff;border:2px solid #c0deb6;border-radius:14px;padding:14px 16px;margin:0 20px 14px;display:flex;align-items:flex-start;gap:12px">
+      <div style="font-size:24px">📱</div>
+      <div>
+        <div style="font-weight:800;font-size:14px;color:${G};margin-bottom:4px">Εγκατάσταση στην αρχική οθόνη</div>
+        <div style="font-size:13px;color:#6a9a5a;line-height:1.5">Πάτα <strong>Share (□↑)</strong> → <strong>"Add to Home Screen"</strong></div>
+      </div>
+      <button onclick="setState({showInstall:false})" style="background:none;border:none;color:#aac89a;font-size:18px;cursor:pointer;margin-left:auto;padding:0">✕</button>
+    </div>`:"";
+
+    html=`${pop}
+    <div style="min-height:100vh;background:${BG};padding-bottom:80px">
+      <div class="hdr">
+        ${Logo(32)}
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+          <span style="font-size:12px;color:rgba(255,255,255,.8)">Γεια, <strong style="color:#fff">${s.user}</strong></span>
+          <button class="hdr-btn" style="font-size:11px;padding:4px 10px" onclick="doLogout()">Έξοδος</button>
+        </div>
+      </div>
+      ${installBanner}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px 14px">
+        <div class="card" style="border-top:4px solid ${G}">
+          <div style="font-size:11px;color:#8ab870;font-weight:800;margin-bottom:4px">ΣΗΜΕΡΑ</div>
+          <div style="font-size:44px;font-weight:900;color:${G};line-height:1">${todaySum(s.logs)}</div>
+          <div style="font-size:11px;color:#aac89a;margin-top:2px">πόντοι</div>
+        </div>
+        <div class="card" style="border-top:4px solid #cce5c0">
+          <div style="font-size:11px;color:#8ab870;font-weight:800;margin-bottom:4px">ΜΗΝΑΣ</div>
+          <div style="font-size:44px;font-weight:900;color:${TX};line-height:1">${mSum(s.logs)}</div>
+          <div style="font-size:11px;color:#aac89a;margin-top:2px">πόντοι</div>
+        </div>
+      </div>
+      <div style="padding:0 20px 14px">
+        <div class="tabs">
+          ${[["log","ΚΑΤΑΓΡΑΦΗ"],["goal","ΣΤΟΧΟΣ"],["charts","ΓΡΑΦΗΜΑΤΑ"],["history","ΙΣΤΟΡΙΚΟ"]].map(([id,lbl])=>`<button class="btn ghost ${s.tab===id?"on":""}" onclick="setState({tab:'${id}'})">${lbl}</button>`).join("")}
+        </div>
+      </div>
+      ${s.tab==="log"?`<div style="padding:0 20px;display:grid;grid-template-columns:1fr 1fr;gap:10px">${actGrid}</div>`:""}
+      ${s.tab==="goal"?`<div style="padding:0 20px">${GoalSection(s.logs,s.goal)}</div>`:""}
+      ${s.tab==="charts"?`<div style="padding:0 20px;display:flex;flex-direction:column;gap:14px">
+        <div class="card">
+          <div style="font-size:11px;color:#8ab870;font-weight:800;margin-bottom:14px">ΤΕΛΕΥΤΑΙΕΣ 7 ΜΕΡΕΣ</div>
+          ${BarChart({data:chartData})}
+        </div>
+        ${monthComp}
+      </div>`:""}
+      ${s.tab==="history"?`<div style="padding:0 20px;display:flex;flex-direction:column;gap:10px">${histItems||"<div style='text-align:center;color:#aac89a;padding-top:60px;font-size:14px'>Δεν υπάρχει ιστορικό.</div>"}</div>`:""}
+    </div>`;
+    document.getElementById("app").innerHTML=html;
+    return;
+  }
+
+  // MANAGER SCREEN
+  if(s.screen==="manager"){
+    const board=s.members.map((m,i)=>{
+      const mg=s.allGoals[m],mp=mSum(s.allLogs[m]),pp=mSum(s.allLogs[m],-1),pct=mg?Math.min(100,Math.round((mp/mg)*100)):null;
+      return{name:m,total:sumAll(s.allLogs[m]),today:todaySum(s.allLogs[m]),mp,pp,goal:mg,pct,inactive:daysInactive(s.allLogs[m]),color:COLORS[i%COLORS.length]};
+    }).sort((a,b)=>b.total-a.total);
+
+    const lbRows=board.map((m,i)=>`<div class="card" style="border-left:5px solid ${m.color};cursor:pointer;margin-bottom:8px" onclick="setState({selMember:'${m.name}'})">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="font-size:24px;width:32px;text-align:center">${i===0?"🥇":i===1?"🥈":i===2?"🥉":i+1}</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="font-weight:800;font-size:15px">${m.name}</div>
+            ${m.inactive>=3?`<span style="font-size:12px;color:#e05252;font-weight:700">⚠️ ${m.inactive}μ</span>`:""}
+          </div>
+          <div style="font-size:12px;color:#8ab870;margin-top:2px">Σήμερα: <strong style="color:${G}">${m.today} pts</strong>${m.goal?` | Μήνας: ${m.mp}/${m.goal}`:""}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:26px;font-weight:900;color:${m.color};line-height:1">${m.total}</div>
+          <div style="font-size:11px;color:#aac89a">ΣΥΝΟΛΟ</div>
+        </div>
+        <div style="color:#cce5c0;font-size:18px">›</div>
+      </div>
+      ${m.goal?`<div style="margin-top:8px"><div style="display:flex;justify-content:space-between;font-size:11px;color:#aac89a;margin-bottom:3px"><span>Μηνιαίος στόχος</span><span style="font-weight:700;color:${m.pct>=75?G:m.pct>=50?"#e6a817":"#e05252"}">${m.pct}%</span></div>${ProgressBar(m.pct,null,6)}</div>`:""}
+    <div style="text-align:right;margin-top:8px"><button class="btn" style="background:#ffe5e5;color:#e05252;border:1px solid #ffb3b3;padding:4px 12px;font-size:11px;border-radius:8px" onclick="event.stopPropagation();deleteMember('${m.name}')">🗑 Διαγραφή</button></div>
+    </div>`).join("");
+
+    const sumRows=board.map(m=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0f6ee">
+      <div style="font-size:20px">${m.goal&&m.mp>=m.goal?"✅":m.inactive>=3?"🚨":"⏳"}</div>
+      <div style="flex:1"><div style="font-weight:700;font-size:14px">${m.name}</div><div style="font-size:12px;color:#8ab870">${m.mp} πόντοι${m.goal?` / ${m.goal} (${m.pct}%)`:" (χωρίς στόχο)"}</div></div>
+      ${m.inactive>=3?`<span style="font-size:12px;color:#e05252;font-weight:700">⚠️ ${m.inactive}μ</span>`:""}
+    </div>`).join("");
+
+    const cmpRows=board.map(m=>{const diff=m.mp-m.pp;return`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0f6ee">
+      <div style="font-size:20px">${diff>0?"📈":diff<0?"📉":"➡️"}</div>
+      <div style="flex:1"><div style="font-weight:700;font-size:14px">${m.name}</div><div style="font-size:12px;color:#8ab870">${m.pp} → ${m.mp}</div></div>
+      <span style="font-weight:800;font-size:14px;color:${diff>0?G:diff<0?"#e05252":"#aaa"}">${diff>0?"+":""}${diff}</span>
+    </div>`;}).join("");
+
+    const last7=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return d.toISOString().slice(0,10);});
+    const teamChartData=last7.map(d=>({label:fmtDay(d),v:s.members.reduce((ss,m)=>ss+(s.allLogs[m]?.[d]||[]).reduce((sss,e)=>sss+e.pts,0),0),today:d===todayKey()}));
+
+    html=`${pop}
+    <div style="min-height:100vh;background:${BG};padding-bottom:80px">
+      <div class="hdr">
+        <div>${Logo(28)}<div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:4px">Coach · ${s.members.length} συνεργάτες</div></div>
+        <div style="display:flex;gap:8px">
+          <button class="hdr-btn" style="font-size:18px" onclick="doRefresh()">↻</button>
+          <button class="hdr-btn" style="background:#f5c842;color:#1a2e14;font-size:12px;font-weight:800" onclick="doSendReport()">📊 Αναφορά</button>
+          <button class="hdr-btn" style="font-size:12px" onclick="doLogout()">Έξοδος</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 20px">
+        <div class="card" style="border-top:4px solid ${G}">
+          <div style="font-size:11px;color:#8ab870;font-weight:800;margin-bottom:4px">ΟΜΑΔΑ ΣΗΜΕΡΑ</div>
+          <div style="font-size:40px;font-weight:900;color:${G};line-height:1">${s.members.reduce((ss,m)=>ss+todaySum(s.allLogs[m]||{}),0)}</div>
+        </div>
+        <div class="card" style="border-top:4px solid #cce5c0">
+          <div style="font-size:11px;color:#8ab870;font-weight:800;margin-bottom:4px">ΟΜΑΔΑ ΜΗΝΑΣ</div>
+          <div style="font-size:40px;font-weight:900;color:${TX};line-height:1">${s.members.reduce((ss,m)=>ss+mSum(s.allLogs[m]||{}),0)}</div>
+        </div>
+      </div>
+      <div style="padding:0 20px 14px">
+        <div class="tabs">
+          ${[["leaderboard","ΚΑΤΑΤΑΞΗ"],["summary","ΣΥΝΟΨΗ"],["team_chart","ΓΡΑΦΗΜΑ"],["members","ΑΝΑΛΥΣΗ"]].map(([id,lbl])=>`<button class="btn ghost ${s.tab===id?"on":""}" onclick="setState({tab:'${id}'})">${lbl}</button>`).join("")}
+        </div>
+      </div>
+      ${s.tab==="leaderboard"?`<div style="padding:0 20px">${lbRows||"<div style='text-align:center;color:#aac89a;padding-top:60px'>Κανένας ακόμα. Πάτα ↻</div>"}<div style="text-align:center;font-size:12px;color:#aac89a;padding-top:4px">Πάτα σε συνεργάτη για αναλυτικό ιστορικό</div></div>`:""}
+      ${s.tab==="summary"?`<div style="padding:0 20px;display:flex;flex-direction:column;gap:12px">
+        <div class="card"><div style="font-weight:800;font-size:14px;color:${G};margin-bottom:12px">📊 Μηνιαία Σύνοψη — ${mName()}</div>${sumRows}</div>
+        <div class="card"><div style="font-weight:800;font-size:14px;color:${G};margin-bottom:12px">📈 Σύγκριση με ${mName(-1)}</div>${cmpRows}</div>
+      </div>`:""}
+      ${s.tab==="team_chart"?`<div style="padding:0 20px"><div class="card"><div style="font-size:11px;color:#8ab870;font-weight:800;margin-bottom:14px">ΟΜΑΔΑ — 7 ΜΕΡΕΣ</div>${BarChart({data:teamChartData})}</div></div>`:""}
+      ${s.tab==="members"?`<div style="padding:0 20px;display:flex;flex-direction:column;gap:10px">${board.map(m=>{
+        const ac={};Object.values(s.allLogs[m.name]||{}).flat().forEach(e=>{ac[e.id]=(ac[e.id]||0)+1;});
+        return`<div class="card" style="cursor:pointer;border-left:5px solid ${m.color}" onclick="setState({selMember:'${m.name}'})">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <div style="display:flex;align-items:center;gap:6px"><div style="font-weight:800;font-size:15px">${m.name}</div>${m.inactive>=3?`<span style="font-size:12px;color:#e05252">⚠️</span>`:""}</div>
+            <span class="badge">${m.total} pts</span>
+          </div>
+          ${m.goal?`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:12px;color:#aac89a;margin-bottom:2px"><span>Μήνας: ${m.mp}/${m.goal}</span><span style="color:${m.pct>=75?G:m.pct>=50?"#e6a817":"#e05252"};font-weight:700">${m.pct}%</span></div>${ProgressBar(m.pct,null,5)}</div>`:""}
+          <div style="display:flex;flex-wrap:wrap;gap:6px">${ACTS.filter(a=>ac[a.id]>0).map(a=>`<span style="font-size:12px;background:#f0fae8;border:1px solid #cce5c0;border-radius:6px;padding:3px 8px;color:${G}">${a.icon} ×${ac[a.id]}</span>`).join("")||`<span style="font-size:13px;color:#aac89a">Καμία δραστηριότητα</span>`}</div>
+          <div style="font-size:12px;color:#b0d0a0;margin-top:8px">Πάτα για αναλυτικό ιστορικό ›</div>
+        </div>`;
+      }).join("")}</div>`:""}
+    </div>`;
+    document.getElementById("app").innerHTML=html;
+    return;
+  }
+}
+
+render();
 </script>
 </body>
 </html>
